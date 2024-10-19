@@ -5,11 +5,13 @@ from uuid import UUID
 import asyncpg
 import pytest
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.auth.security import create_access_token
 from app.main import app
+from app.referral_code.model import ReferralCode
 from app.session import get_db
 from app.settings import ACCESS_TOKEN_EXPIRE_MINUTES, DATABASE_URL
 from app.user.model import User
@@ -65,3 +67,21 @@ async def create_user_in_database(asyncpg_pool):
             return new_user
 
     return create_user_in_database
+
+
+@pytest.fixture
+async def get_user_from_database(asyncpg_pool):
+    async def get_user_from_database_by_uuid(user_id: UUID):
+        async with test_async_session() as session:
+            result = await session.execute(select(User).where(User.id == user_id))
+            return result.scalars().first()
+    return get_user_from_database_by_uuid
+
+
+@pytest.fixture
+async def get_referral_code_from_database(asyncpg_pool):
+    async def get_referral_code_from_database_by_code(code: str):
+        async with test_async_session() as session:
+            result = await session.execute(select(ReferralCode).where(ReferralCode.code == code))
+            return result.scalars().first()
+    return get_referral_code_from_database_by_code

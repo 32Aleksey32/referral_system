@@ -31,7 +31,7 @@ async def create_referral_code(
     response_model=ReferralCodeDetail,
     summary='Получить реферальный код по email пользователя'
 )
-async def get_referral_code_by_email(email: EmailStr, session: AsyncSession = Depends(get_db)):
+async def get_referral_code_by_user_email(email: EmailStr, session: AsyncSession = Depends(get_db)):
     ref_code_service = ReferralCodeService(session)
     user_service = UserService(session)
     try:

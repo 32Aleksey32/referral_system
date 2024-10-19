@@ -33,7 +33,7 @@ async def register(user: UserCreate, session: AsyncSession = Depends(get_db)):
 
 
 @user_router.get('/me', response_model=UserMe, summary='Получить информацию о текущем пользователе')
-async def get_user(user: User = Depends(get_current_user), session: AsyncSession = Depends(get_db)):
+async def get_me(user: User = Depends(get_current_user), session: AsyncSession = Depends(get_db)):
     user_service = UserService(session)
     return await user_service.get_user_by_email(user.email)
 
