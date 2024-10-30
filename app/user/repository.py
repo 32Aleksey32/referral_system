@@ -3,7 +3,7 @@ from uuid import UUID
 from sqlalchemy import or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import joinedload
 
 from .model import User
 
@@ -17,7 +17,7 @@ class UserRepository:
         await self.session.commit()
 
     async def get_user_by_email(self, email: str) -> User:
-        query = select(User).options(selectinload(User.referral_code)).where(User.email == email)
+        query = select(User).options(joinedload(User.referral_code)).where(User.email == email)
         result = await self.session.execute(query)
         return result.scalars().first()
 
